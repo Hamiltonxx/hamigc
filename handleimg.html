@@ -111,6 +111,7 @@
         </div>
     </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 
 var textarea = document.querySelector('#textarea');
@@ -133,43 +134,18 @@ textarea.addEventListener('keydown', function (e) {
 function getImage(key) {
     loading(true);
 
-    fetch(
-        "https://aigc.cirray.cn:8000/downloadimg",
-        {
-            method: "post",
-            body: JSON.stringify({
-                image: key
-            }),
-            headers: {
-                "Content-Type": "application/json"
-            }  
-        }
-    )
-    .then(async function (data) {
-        var stream = data.body;
-
-        var chunks = [];
-
-        var reader = stream.getReader();
-
-        var result = await reader.read();
-
-        while(!result.done) {
-            chunks.push(result.value);
-
-            result = await reader.read();
-        }
-
-        var blob = new Blob(chunks);
-
-        var url = URL.createObjectURL(blob);
+    axios({
+        url: 'https://aigc.cirray.cn:8000/downloadimg',
+        method: "post",
+        data: { image: key },
+        responseType: 'blob'
+    })
+    .then(function(res) {
+        var url = URL.createObjectURL(res.data);
 
         img.src = url;
 
         loading(false);
-    })
-    .catch(function (err) {
-
     });
 }
 
