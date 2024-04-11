@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<title>Highlight Editor</title>
+	<link rel="stylesheet" type="text/css" href="github-dark.min.css">
+	<style type="text/css">
+		* {
+			margin: 0;
+		}
+		#editing, #highlighting {
+		  /* Both elements need the same text and space styling so they are directly on top of each other */
+		  margin: 10px;
+		  padding: 10px;
+		  border: 0;
+		  width: calc(100% - 32px);
+		  height: 150px;
+		}
+		#editing, #highlighting, #highlighting * {
+		  /* Also add text styles to highlighting tokens */
+		  font-size: 15pt;
+		  font-family: monospace;
+		  line-height: 20pt;
+		}
+		#editing, #highlighting {
+		  position: absolute;
+		  top: 0;
+		  left: 0;
+		}
+		/* Move the textarea in front of the result */
+		#editing {
+		  z-index: 1;
+		  color: transparent;
+		  background: transparent;
+		  caret-color: white; /* Or choose your favorite color */
+		}
+
+		#highlighting {
+		  z-index: 0;
+		}
+	</style>
+	<script src="highlight.min.js"></script>
+</head>
+<body>
+	<textarea id="editing" oninput="update(this.value);"></textarea>
+	<br/>
+	<pre id="highlighting" aria-hidden="true">
+		<code class="language-python" id="highlighting-content"></code>
+	</pre>
+
+	<script>
+		function update(text) {
+			let result_element = document.querySelector('#highlighting-content');
+			result_element.innerText = text;
+			// hljs.highlightElement(result_element);
+			hljs.highlightAll();
+		}
+	</script>
+</body>

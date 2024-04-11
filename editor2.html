@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<title>Highlight Editor</title>
+	<link rel="stylesheet" type="text/css" href="github-dark.min.css">
+	<script src="highlight.min.js"></script>
+</head>
+<body>
+	<textarea id="code" rows="10" cols="60"></textarea>
+	<button onclick="highlightcode()">HighLight</button>
+	<pre><code id="hlcode" class="language-python"></code></pre>
+
+	<script>
+		function highlightcode() {
+			var code = document.getElementById('code').value;
+			var hlcode = hljs.highlight('python', code).value;
+			document.getElementById('hlcode').innerHTML = hlcode;
+			hljs.highlightAll();
+		}
+	</script>
+</body>
