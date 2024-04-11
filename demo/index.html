@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="styles/github-dark.min.css" />
+    <script src="./js/highlight.min.js"></script>
+    <style>
+        * { padding: 0; margin: 0; }
+        html, body {
+            width: 100%;
+            min-height: 700px;
+            font-size: 0;
+            padding-top: 60px;
+        }
+        .wrapper {
+            position: relative;
+            width: 800px;
+            margin: 0 auto;
+            min-height: 100px;
+            border-radius: 4px;
+            background-color: #1b1b1b;
+            box-shadow: 0 0 10px rgba(0,0,0,.15);
+            font-size: 14px;
+        }
+        pre code.hljs {
+            padding: 16px !important;        
+        }
+        pre, code {
+            height: 100%;
+        }
+        code {
+            outline: none;
+        }
+        #textarea {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* background-color: rgba(233,21,132, .5); */
+            color: transparent;
+            /* color: red; */
+            outline: none;
+            caret-color: #fff;
+            padding: 16px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .btns {
+            position: absolute;
+            top: -30px;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <pre>
+            <code id="code" class="python"></code>
+        </pre>
+        <code 
+            autofocus 
+            contenteditable
+            oninput="handleInput()"
+            id="textarea"
+            spellcheck="false"
+        ></code>
+
+        <div class="btns">
+            当前高亮的语言：<span id="current">python</span>
+
+            <div style="margin-left: 50px; display: inline-block;">
+                <button onclick="handleSelectLang('python')">python</button>
+                <button onclick="handleSelectLang('javascript')">javascript</button>
+                <button onclick="handleSelectLang('java')">java</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    var code = document.querySelector('#code');
+    var textarea = document.querySelector('#textarea');
+    
+    init();
+
+    /**
+     * 重置渲染方法
+     */
+    function init() {
+        code.removeAttribute('data-highlighted');
+
+        hljs.highlightAll();
+    }
+
+    /**
+     * 监听输入事件 将换行符 替换成 换行标签
+     */
+    function handleInput() {
+        let text = textarea.innerText.replace(/\r\n/g,"<br>");
+
+        code.innerHTML = text;
+
+        init();
+    }
+
+    /**
+     * 切换语言
+     */
+    function handleSelectLang(lang) {
+        document.querySelector('#current').innerText = lang;
+
+        code.className = lang;
+
+        init();
+    }
+
+    /**
+     * 按下 tab 键增加 4个 空格符
+     */
+    textarea.addEventListener('keydown', e => {
+        if (e.keyCode === 9) {
+            var doc = textarea.ownerDocument.defaultView;
+            var sel = doc.getSelection();
+            var rang = sel.getRangeAt(0);
+
+            var tabNode = document.createTextNode("\u00a0\u00a0\u00a0\u00a0");
+
+            rang.insertNode(tabNode);
+            rang.setStartAfter(tabNode);
+            rang.setEndAfter(tabNode);
+            sel.removeAllRanges();
+            sel.addRange(rang);
+
+            e.preventDefault();
+        }
+    }, false);
+</script>
+</html>
