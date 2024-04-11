@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<title>Highlight Editor</title>
+	<link rel="stylesheet" type="text/css" href="github-dark.min.css">
+	<style>
+		.code-container {
+			position: relative;
+		}
+		.highlighted-code {
+			position: absolute;
+			top: 0;
+			left: 0;
+			pointer-events: none; /* 防止代码高亮遮挡输入 */
+		}
+		.code-input {
+			position: absolute;
+			top: 0;
+			left: 0;
+			opacity: 0; /* 隐藏输入框 */
+			height: 100%;
+			width: 100%;
+		}
+		.cursor {
+			position: absolute;
+			background-color: #000;
+			width: 2px;
+			height: 1.2em;
+			animation: cursor-blink 1s infinite; /*光标闪烁动画*/
+		}
+		@keyframes cursor-blink {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+	</style>
+	<script src="highlight.min.js"></script>
+</head>
+<body>
+ 	<div class="code-container">
+ 		<pre><code id="highlighted-code" class="language-python"></code></pre>
+ 		<textarea id="code-input" class="code-input" rows="10" cols="60" autofocus></textarea>
+ 		<div id="cursor" class="cursor"></div>
+ 	</div>
+	<script>
+		hljs.highlightAll();
+		var codeInput = document.getElementById('code-input');
+		var highlightedCode = document.getElementById('highlighted-code');
+		var cursor = document.getElementById('cursor');
+		codeInput.addEventListener('input', function() {
+			var code = codeInput.value;
+			var highlighted = hljs.highlight('python', code).value;
+			highlightedCode.innerHTML = highlighted;
+		});
+		codeInput.addEventListener('input', updateCursorPosition);
+        codeInput.addEventListener('scroll', updateCursorPosition);
+        function updateCursorPosition() {
+            var lines = codeInput.value.substr(0, codeInput.selectionStart).split('\n');
+            var lastLine = lines[lines.length - 1];
+            var lastLineLength = lastLine.length;
+
+            var lineHeight = parseInt(getComputedStyle(codeInput).lineHeight);
+            var scrollTop = codeInput.scrollTop;
+            var scrollLeft = codeInput.scrollLeft;
+
+            var lineCount = codeInput.value.split('\n').length;
+            var cursorTop = (lineCount - lines.length) * lineHeight + lineHeight;
+            var cursorLeft = lastLineLength * 10; // Adjust the cursor position according to your font size
+
+            cursor.style.top = cursorTop - scrollTop + 'px';
+            cursor.style.left = cursorLeft - scrollLeft + 'px';
+        }
+	</script>
+</body>
