@@ -21,7 +21,23 @@
         <div class="wrapper">
             <div class="class"></div>
 
-            <div class="content"></div>
+            <div class="content">
+                <h2 id="title"></h2>
+                <div id="description"></div>
+
+                <div class="code-area">
+                    <pre>
+                        <code id="code" class="python"></code>
+                    </pre>
+                    <code 
+                        autofocus 
+                        contenteditable
+                        oninput="handleInput()"
+                        id="textarea"
+                        spellcheck="false"
+                    ></code>
+                </div>
+            </div>
         </div>
     </div>
 </body>
@@ -99,7 +115,6 @@ function getProblems() {
         url: '/problems',
         method: 'get',
         success: function (res) {
-            console.log(res);
             problems = res;
 
             renderProblem(res);
@@ -118,6 +133,7 @@ function renderProblem(list) {
     var template = function (text, id, index) {
         return '<div class="question question-'+ index +'" onclick="handleSelectProblem('+ id +', '+ index +')">'
             + '<span class="arc"><span></span></span>'
+            + (index + 1) + '、'
             + text
             + '</div>'
     };
@@ -138,6 +154,8 @@ function renderProblem(list) {
 /**
  * 点击题目
  */
+var title_dom = document.querySelector('#title');
+var description_dom = document.querySelector('#description');
 function handleSelectProblem(id, index) {
     var target = {};
 
@@ -147,16 +165,70 @@ function handleSelectProblem(id, index) {
         }
     }
 
-    console.log(target);
+    // 渲染内容区域
+    title_dom.innerHTML = index + 1 + '、' + target.title;
+    description_dom.innerHTML = target.description;
+    code_dom.innerHTML = target.codeinit.replace(/\r\n/g,"<br>");
+    textarea_dom.innerText = target.codeinit;
 
+    init();
+
+    // 渲染左侧导航栏
     var questions = document.querySelectorAll('.question');
     for (var j = 0; j < questions.length; j++) {
         questions[j].className = questions[j].className.replace(' arc-active', '');
     }
 
     var current = document.querySelector('.question-' + index);
-    console.log(current);
+    
     current.className = current.className + ' arc-active';
 }
+</script>
+<script>
+    var code_dom = document.querySelector('#code');
+    var textarea_dom = document.querySelector('#textarea');
+    
+    init();
+
+    /**
+     * 重置渲染方法
+     */
+    function init() {
+        code_dom.removeAttribute('data-highlighted');
+
+        hljs.highlightAll();
+    }
+
+    /**
+     * 监听输入事件 将换行符 替换成 换行标签
+     */
+    function handleInput() {
+        let text = textarea_dom.innerText.replace(/\r\n/g,"<br>");
+
+        code_dom.innerHTML = text;
+
+        init();
+    }
+
+    /**
+     * 按下 tab 键增加 4个 空格符
+     */
+     textarea_dom.addEventListener('keydown', e => {
+        if (e.keyCode === 9) {
+            var doc = textarea.ownerDocument.defaultView;
+            var sel = doc.getSelection();
+            var rang = sel.getRangeAt(0);
+
+            var tabNode = document.createTextNode("\u00a0\u00a0\u00a0\u00a0");
+
+            rang.insertNode(tabNode);
+            rang.setStartAfter(tabNode);
+            rang.setEndAfter(tabNode);
+            sel.removeAllRanges();
+            sel.addRange(rang);
+
+            e.preventDefault();
+        }
+    }, false);
 </script>
 </html>
