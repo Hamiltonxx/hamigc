@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>coding</title>
+    <link rel="stylesheet" href="../styles/global.css" />
+    <link rel="stylesheet" href="../styles/index.css" />
+    <link rel="stylesheet" href="../styles/github-dark.min.css" />
+    <link rel="stylesheet" href="../assets/fonts/iconfont.css" />
+    <script src="../javascript/highlight.min.js"></script>
+    <script src="../javascript/axios.min.js"></script>
+    <script src="../javascript/request.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">Python 教程</div>
+        </div>
+
+        <div class="wrapper">
+            <div class="class"></div>
+
+            <div class="content"></div>
+        </div>
+    </div>
+</body>
+<script>
+getCollections();
+
+var collections = [];
+var problems = [];
+/**
+ * 获取题集
+ */
+function getCollections() {
+    request({
+        url: '/collections',
+        method: 'get',
+        success: function (res) {
+            collections = res;
+
+            renderCollection(res);
+        },
+        fail: function (err) {
+            alert('获取题集发生错误');
+            console.log(err);
+        }
+    });
+}
+
+/**
+ * 渲染题集
+ */
+function renderCollection(list) {
+    var template = function (text, index) {
+        return '<div class="co-title' + (index == 0 ? ' active' : '') + '" id="title-' + index + '">' 
+            + '<div class="co-title-text" onclick="handleSelectCollection('+ index +')">'
+            + '<span class="icon"><i class="iconfont icon-xiangyou"></i></span>'
+            + text 
+            + '</div>'
+            + '<div class="questions" id="question-' + index + '"></div>'
+            + '</div>';
+    };
+
+    var html = '';
+
+    for (var i = 0; i < list.length; i++) {
+        html += template(list[i].name, i);
+    }
+
+    document.querySelector('.class').innerHTML = html;   
+    
+    getProblems();
+}
+
+/**
+ * 添加了题集的点击事件
+ */
+function handleSelectCollection(index) {
+    var dom = document.querySelector('#title-' + index);
+
+    if (dom.className.indexOf('active') > -1) {
+        dom.className = 'co-title';
+
+        document.querySelector('#question-0').style.display = 'none';
+    } else {
+        dom.className = 'co-title active';
+
+        document.querySelector('#question-0').style.display = 'block';
+    }
+}
+
+/**
+ * 获取题目
+ */
+function getProblems() {
+    request({
+        url: '/problems',
+        method: 'get',
+        success: function (res) {
+            console.log(res);
+            problems = res;
+
+            renderProblem(res);
+        },
+        fail: function (err) {
+            alert('获取题目发生错误');
+            console.log(err)
+        }
+    });
+}
+
+/**
+ * 渲染题目
+ */
+function renderProblem(list) {
+    var template = function (text, id, index) {
+        return '<div class="question question-'+ index +'" onclick="handleSelectProblem('+ id +', '+ index +')">'
+            + '<span class="arc"><span></span></span>'
+            + text
+            + '</div>'
+    };
+
+    var html = '';
+
+    for (var i = 0; i < list.length; i++) {
+        html += template(list[i].title, list[i].id, i);
+    }
+    
+    document.querySelector('#question-' + 0).innerHTML = html;
+
+    setTimeout(function () {
+        handleSelectProblem(list[0].id, 0);
+    }, 100);
+}
+
+/**
+ * 点击题目
+ */
+function handleSelectProblem(id, index) {
+    var target = {};
+
+    for (var i = 0; i < problems.length; i++) {
+        if (problems[i].id == id) {
+            target = problems[i];
+        }
+    }
+
+    console.log(target);
+
+    var questions = document.querySelectorAll('.question');
+    for (var j = 0; j < questions.length; j++) {
+        questions[j].className = questions[j].className.replace(' arc-active', '');
+    }
+
+    var current = document.querySelector('.question-' + index);
+    console.log(current);
+    current.className = current.className + ' arc-active';
+}
+</script>
+</html>
