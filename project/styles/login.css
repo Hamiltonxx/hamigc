@@ -1,9 +1,8 @@
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .container .logo {
@@ -14,6 +13,7 @@
     background-size: contain;
     background-position: center;
     background-color: #2f2f2f;
+    float: left;
 }
 
 .container .logo span {
@@ -26,7 +26,7 @@
 }
 
 .container .login {
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
     width: 50%;
@@ -53,7 +53,7 @@
 }
 
 .container .login .wrapper .form .active .label{
-    transform: translateY(-25px) scale(.8, .8);
+    transform: translateY(-25px) scale(.9, .9);
 }
 
 .container .login .wrapper .form-item .label {

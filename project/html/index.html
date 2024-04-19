@@ -167,7 +167,7 @@ function handleSelectProblem(id, index) {
 
     // 渲染内容区域
     title_dom.innerHTML = index + 1 + '、' + target.title;
-    description_dom.innerHTML = target.description;
+    description_dom.innerHTML = target.description.split('\n').join('<br />');
     code_dom.innerHTML = target.codeinit.replace(/\r\n/g,"<br>");
     textarea_dom.innerText = target.codeinit;
 

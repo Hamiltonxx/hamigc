@@ -10,12 +10,19 @@ var host = 'https://py.cirray.cn:8005';
  * @param {*} fail 
  */
 function request(options) {
-    // url, method, data, success, fail
+    var token = '';
+
+    try {
+        token = JSON.parse(localStorage.getItem('python_token')).token;
+    } catch (err) {};
 
     axios({
         url: host + options.url,
         method: options.method,
-        data: options.data
+        data: options.data,
+        headers: {
+            token: token
+        }
     })
     .then(function (res) {
         if (res.status == 200) {
