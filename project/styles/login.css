@@ -85,6 +85,8 @@
     background-color: transparent;
 }
 
+.container .login .wrapper .form-item input:focus { outline: none; }
+
 #code {
     width: 50%;
     float: left;

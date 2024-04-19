@@ -6,6 +6,8 @@
     <title>登录</title>
     <link rel="stylesheet" href="../styles/global.css" />
     <link rel="stylesheet" href="../styles/login.css" />
+    <script src="../javascript//axios.min.js"></script>
+    <script src="../javascript/request.js"></script>
 </head>
 <body>
     <div class="container">
@@ -101,6 +103,7 @@ function getCode(e) {
 
 function getCodeRequest(e) {
     // 发送请求
+    sendGetCodeRequest();
 
     var time = 10;
 
@@ -116,6 +119,26 @@ function getCodeRequest(e) {
 
         e.target.innerText = '重新发送(' + time + ')';
     }, 1000);
+}
+
+/**
+ * 发送获取验证码请求
+ */
+function sendGetCodeRequest() {
+    request({
+        url: '/send_vericode',
+        method: 'post',
+        data: {
+            phone: phone_dom.value
+        },
+        success: function (res) {
+            console.log(res);
+        },
+        fail: function (err) {
+            alert('获取验证码错误');
+            console.log(err);
+        }
+    })
 }
 
 /**
