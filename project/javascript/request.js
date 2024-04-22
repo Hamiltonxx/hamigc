@@ -21,7 +21,7 @@ function request(options) {
         method: options.method,
         data: options.data,
         headers: {
-            token: token
+            authorization: token
         }
     })
     .then(function (res) {

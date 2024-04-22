@@ -26,9 +26,21 @@
     background-color: #fff;
 }
 
+.container .wrapper .ques {
+    display: inline-block;
+    width: 900px;
+}
+
+.container .wrapper .content button{
+    width: 100px;
+    height: 32px;
+    cursor: pointer;
+}
+
 .container .wrapper .class {
     width: 300px;
     height: 100%;
+    overflow: auto;
     background-color: #f2f3f4;
     color: #333;
     box-sizing: border-box;

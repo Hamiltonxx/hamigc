@@ -11,6 +11,9 @@
     <script src="../javascript/highlight.min.js"></script>
     <script src="../javascript/axios.min.js"></script>
     <script src="../javascript/request.js"></script>
+    <!-- 弹框插件 -->
+    <link rel="stylesheet" href="../assets/plugins/sweetaleat/sweetaleat.css" />
+    <script src="../assets/plugins/sweetaleat/sweetalert.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -22,9 +25,11 @@
             <div class="class"></div>
 
             <div class="content">
-                <h2 id="title"></h2>
-                <div id="description"></div>
-
+                <div class="ques">
+                    <h2 id="title"></h2>
+                    <div id="description"></div>
+                </div>
+                <button onclick="handleSubmit()">提交</button>
                 <div class="code-area">
                     <pre>
                         <code id="code" class="python"></code>
@@ -59,7 +64,7 @@ function getCollections() {
             renderCollection(res);
         },
         fail: function (err) {
-            alert('获取题集发生错误');
+            errorAlert('获取题集发生错误');
             console.log(err);
         }
     });
@@ -120,7 +125,7 @@ function getProblems() {
             renderProblem(res);
         },
         fail: function (err) {
-            alert('获取题目发生错误');
+            errorAlert('获取题目发生错误');
             console.log(err)
         }
     });
@@ -183,6 +188,34 @@ function handleSelectProblem(id, index) {
     
     current.className = current.className + ' arc-active';
 }
+
+/**
+ * 提交代码
+ */
+function handleSubmit() {
+    let id = '';
+
+    try {
+        id = JSON.parse(localStorage.getItem('python_token')).id;
+    } catch(err) {
+        console.log(err);
+    };
+
+    request({
+        url: '/submission',
+        method: 'post',
+        data: {
+            pid: id,
+            codes: textarea_dom.innerText
+        },
+        success: function (res) {
+            console.log(res);
+        },
+        fail: function (err) {
+            errorAlert("提交失败");
+        }
+    });
+}
 </script>
 <script>
     var code_dom = document.querySelector('#code');
@@ -214,6 +247,7 @@ function handleSelectProblem(id, index) {
      * 按下 tab 键增加 4个 空格符
      */
      textarea_dom.addEventListener('keydown', e => {
+        return ;
         if (e.keyCode === 9) {
             var doc = textarea.ownerDocument.defaultView;
             var sel = doc.getSelection();
@@ -230,5 +264,15 @@ function handleSelectProblem(id, index) {
             e.preventDefault();
         }
     }, false);
+
+/**
+ * 错误弹框
+ */
+function errorAlert(text) {
+    Swal.fire({
+        icon: "warning",
+        text: text,
+    });
+}
 </script>
 </html>
