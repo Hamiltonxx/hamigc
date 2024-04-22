@@ -1,3 +1,6 @@
+import axios from 'axios';
+import router from '../router';
+
 var host = 'https://py.cirray.cn:8005';
 
 
@@ -9,11 +12,11 @@ var host = 'https://py.cirray.cn:8005';
  * @param {*} success 
  * @param {*} fail 
  */
-function request(options) {
+export function request(options) {
     var token = '';
 
     try {
-        token = JSON.parse(localStorage.getItem('python_token')).token;
+        token = JSON.parse(localStorage.getItem('python.user')).token;
     } catch (err) {};
 
     axios({
@@ -21,7 +24,7 @@ function request(options) {
         method: options.method,
         data: options.data,
         headers: {
-            authorization: token
+            authorization: "Bearer " + token
         }
     })
     .then(function (res) {
@@ -32,6 +35,12 @@ function request(options) {
         }
     })
     .catch(function (err) {
+        console.log(err);
+        if (err.response.status == 403) {
+            router.replace('/login');
+            return ;
+        }
+
         options.fail(err);
     });
 }
